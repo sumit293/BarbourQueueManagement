@@ -3,8 +3,6 @@ package services;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,19 +11,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import dbcon.ConnectDB;
-import pojo.CustomerPojo;
 
 /**
- * Servlet implementation class CustomerLogin
+ * Servlet implementation class BarberRegister
  */
-@WebServlet("/CustomerLogin")
-public class CustomerLogin extends HttpServlet {
+@WebServlet("/BarberRegister")
+public class BarberRegister extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public CustomerLogin() {
+    public BarberRegister() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -45,46 +42,44 @@ public class CustomerLogin extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 		
-		String cemail = request.getParameter("cemail");
-		String cpassword = request.getParameter("cpassword");
-
-	
+		String bname = request.getParameter("bname");
+		String bemail = request.getParameter("bemail");
+		String  bphone = request.getParameter("bphone");
+		String bshop = request.getParameter("bshop");
+		String bpassword = request.getParameter("bpassword");
 		
-		Connection con = ConnectDB.getConnect();
-		
-		
-
 		try {
+			int bid = 0;
+			Connection con = ConnectDB.getConnect();
 			
-			String s = "select * from customer where  cemail =? and cpassword=?";
-			PreparedStatement ps1 = con.prepareStatement(s);
+			String BRegister = "insert into barber(bname, bemail, bphone, bpassword, bshop) values(?, ?, ?, ?, ?)";
+			PreparedStatement ps1 = con.prepareStatement(BRegister);
 			
-			ps1.setString(1, cemail);
-			ps1.setString(2, cpassword);
+			ps1.setString(1, bname);
+			ps1.setString(2, bemail);
+			ps1.setString(3, bphone);
+			ps1.setString(4, bpassword);
+			ps1.setString(5, bshop);
 			
-			ResultSet rs = ps1.executeQuery();
+			int rs = ps1.executeUpdate();
+			 if(rs > 0)
+			 {
+				 System.out.println("THE BARBER  IS REGISTERRED SUCCESSFULLY !");
+				 response.sendRedirect("barberLogin.html");
+				 
+			 }
+			 else
+			 {
+				 System.out.println("there  is smething wrong ");
+				 response.sendRedirect("error.html");
+			 }
 			
-			if(rs.next()){
-				
-				int cid = rs.getInt("cid");
-				
-				
-		 
-				CustomerPojo.setCemail(cemail);
-				
-				CustomerPojo.setCpassword(cpassword);
-				CustomerPojo.setCid(cid);
-				
-				response.sendRedirect("Customerdashboard.html");
-				
-			}
-		} catch (SQLException e) {
-		response.sendRedirect("error.html");
-			e.printStackTrace();
+			
+		} catch (Exception e) {
+		
+			
+		e.printStackTrace();
 		}
-		
-	
-		
 	}
 
 }

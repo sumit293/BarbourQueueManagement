@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,16 +15,16 @@ import dbcon.ConnectDB;
 import pojo.CustomerPojo;
 
 /**
- * Servlet implementation class CustomerLogin
+ * Servlet implementation class BarberLogin
  */
-@WebServlet("/CustomerLogin")
-public class CustomerLogin extends HttpServlet {
+@WebServlet("/BarberLogin")
+public class BarberLogin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public CustomerLogin() {
+    public BarberLogin() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -45,46 +44,37 @@ public class CustomerLogin extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 		
-		String cemail = request.getParameter("cemail");
-		String cpassword = request.getParameter("cpassword");
-
-	
-		
+		String bemail = request.getParameter("bemail");
+		String bpassword = request.getParameter("bpassword");
+		 
 		Connection con = ConnectDB.getConnect();
 		
 		
-
 		try {
+			String login = "select * from barber where  bemail =? and bpassword=?";
+			PreparedStatement ps1 = con.prepareStatement(login);
 			
-			String s = "select * from customer where  cemail =? and cpassword=?";
-			PreparedStatement ps1 = con.prepareStatement(s);
-			
-			ps1.setString(1, cemail);
-			ps1.setString(2, cpassword);
+			ps1.setString(1, bemail);
+			ps1.setString(2, bpassword);
 			
 			ResultSet rs = ps1.executeQuery();
 			
-			if(rs.next()){
+			if(rs.next())
+			{
+				CustomerPojo.setCemail(bemail);
 				
-				int cid = rs.getInt("cid");
+				CustomerPojo.setCpassword(bpassword);
 				
-				
-		 
-				CustomerPojo.setCemail(cemail);
-				
-				CustomerPojo.setCpassword(cpassword);
-				CustomerPojo.setCid(cid);
-				
-				response.sendRedirect("Customerdashboard.html");
-				
+				response.sendRedirect("barberdashboard.html");
 			}
-		} catch (SQLException e) {
-		response.sendRedirect("error.html");
+			
+			else
+			{
+				System.out.println("error.html");
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-	
-		
 	}
 
 }

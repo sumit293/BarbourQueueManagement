@@ -1,9 +1,15 @@
+<%@page import="java.sql.ResultSet"%>
+<%@page import="java.sql.PreparedStatement"%>
+<%@page import="dbcon.ConnectDB"%>
+<%@page import="java.sql.Connection"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="ISO-8859-1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Barber Queue System</title>
+    <title>Manage Customers - Admin Dashboard</title>
     <style>
         /* Modern Professional CSS */
         * {
@@ -19,6 +25,9 @@
             --secondary: #64748b;
             --dark: #1e293b;
             --light: #f8fafc;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
             --sidebar-width: 260px;
         }
 
@@ -181,57 +190,138 @@
             padding: 32px;
         }
 
-        .welcome-section {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            padding: 32px;
-            border-radius: 12px;
-            margin-bottom: 32px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
         }
 
-        .welcome-section h2 {
+        .page-title {
             font-size: 28px;
-            margin-bottom: 8px;
-            font-weight: 600;
+            font-weight: 700;
+            color: var(--dark);
         }
 
-        .welcome-section p {
-            opacity: 0.9;
-            font-size: 16px;
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 16px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
+        .back-link:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .back-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            filter: invert(100%);
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
             margin-bottom: 32px;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        .data-table th {
+            background: var(--light);
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .data-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-delete {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        .btn-icon {
+            width: 14px;
+            height: 14px;
+            margin-right: 6px;
+            filter: invert(100%);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--secondary);
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
         }
 
         .stat-card {
             background: white;
-            padding: 24px;
+            padding: 20px;
             border-radius: 12px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            text-align: center;
             border-left: 4px solid var(--primary);
-            transition: transform 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .stat-card.barber {
-            border-left-color: #10b981;
-        }
-
-        .stat-card.customer {
-            border-left-color: #f59e0b;
-        }
-
-        .stat-card.queue {
-            border-left-color: #ef4444;
         }
 
         .stat-value {
@@ -245,56 +335,6 @@
             color: var(--secondary);
             font-size: 14px;
             font-weight: 500;
-        }
-
-        .quick-actions {
-            background: white;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .quick-actions h3 {
-            font-size: 18px;
-            margin-bottom: 20px;
-            color: var(--dark);
-        }
-
-        .action-buttons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-        }
-
-        .action-btn {
-            display: flex;
-            align-items: center;
-            padding: 16px 20px;
-            background: var(--light);
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            text-decoration: none;
-            color: var(--dark);
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .action-btn:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        .action-icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 12px;
-            filter: invert(40%) sepia(10%) saturate(1000%) hue-rotate(180deg) brightness(90%) contrast(85%);
-        }
-
-        .action-btn:hover .action-icon {
-            filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
         }
 
         /* Footer Styles */
@@ -339,29 +379,106 @@
             font-size: 14px;
         }
 
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+
         /* Responsive Design */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .sidebar {
                 transform: translateX(-100%);
             }
-
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
             .main-content {
                 margin-left: 0;
             }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            
+            .stats-summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
 
-            .stats-grid {
+        @media (max-width: 768px) {
+            .dashboard-content {
+                padding: 20px 16px;
+            }
+            
+            .header {
+                padding: 0 16px;
+            }
+            
+            .stats-summary {
                 grid-template-columns: 1fr;
             }
+            
+            .table-container {
+                border-radius: 8px;
+            }
+            
+            .data-table {
+                font-size: 14px;
+            }
+            
+            .data-table th,
+            .data-table td {
+                padding: 12px 8px;
+            }
+        }
 
-            .action-buttons {
+        @media (max-width: 480px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .page-title {
+                font-size: 24px;
+            }
+            
+            .footer-content {
                 grid-template-columns: 1fr;
+                gap: 24px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        ☰ Menu
+    </button>
+
     <!-- Sidebar -->
-    <nav class="sidebar">
+    <nav class="sidebar" id="sidebar">
         <div class="logo-container">
             <div class="logo">BARBERQUEUE</div>
             <div class="logo-subtitle">ADMIN DASHBOARD</div>
@@ -371,7 +488,7 @@
             <div class="nav-section">
                 <div class="nav-title">Main Navigation</div>
                 <ul class="nav-links">
-                    <li><a href="#" class="active">
+                    <li><a href="admindashboard.html">
                         <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3Qgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB4PSIzIiB5PSIzIiByeD0iMiIgcnk9IjIiPjwvcmVjdD48cGF0aCBkPSJNMyA5aDE4TTkgMjFWOUIiPjwvcGF0aD48L3N2Zz4=" class="nav-icon" alt="Dashboard">
                         Dashboard
                     </a></li>
@@ -379,7 +496,7 @@
                         <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIwIDIxdi0yYTQgNCAwIDAgMC00LTRINGE0IDQgMCAwIDAtNCA0djIiPjwvcGF0aD48Y2lyY2xlIGN4PSIxMiIgY3k9IjciIHI9IjQiPjwvY2lyY2xlPjwvc3ZnPg==" class="nav-icon" alt="Barbers">
                         Manage Barbers
                     </a></li>
-                    <li><a href="manageCustomer.jsp">
+                    <li><a href="#" class="active">
                         <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTE3IDIxdi0yYTQgNCAwIDAgMC00LTRINS00YTQgNCAwIDAgMC00IDR2MiI+PC9wYXRoPjxjaXJjbGUgY3g9IjkiIGN5PSI3IiByPSI0Ij48L2NpcmNsZT48cGF0aCBkPSJNMjMgMjF2LTJhNCA0IDAgMCAwLTMtMy44NyI+PC9wYXRoPjxwYXRoIGQ9Ik0xNiAzLjEzYTQgNCAwIDAgMSAwIDcuNzUiPjwvcGF0aD48L3N2Zz4=" class="nav-icon" alt="Customers">
                         Manage Customers
                     </a></li>
@@ -403,24 +520,6 @@
                     </a></li>
                 </ul>
             </div>
-
-            <div class="nav-section">
-                <div class="nav-title">Reports</div>
-                <ul class="nav-links">
-                    <li><a href="#">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBvbHlsaW5lIHBvaW50cz0iMTggMjAgNiAyMCA2IDEwIj48L3BvbHlsaW5lPjxwb2x5bGluZSBwb2ludHM9IjEyIDE2IDE4IDEwIDEyIDEwIj48L3BvbHlsaW5lPjxwb2x5bGluZSBwb2ludHM9IjYgMTIgMTIgMTIgMTIgNiI+PC9wb2x5bGluZT48L3N2Zz4=" class="nav-icon" alt="Analytics">
-                        Analytics
-                    </a></li>
-                    <li><a href="#">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGxpbmUgeDE9IjEyIiB5MT0iMSIgeDI9IjEyIiB5Mj0iMjMiPjwvbGluZT48cGF0aCBkPSJNMTcgNUg5LjVhMy41IDMuNSAwIDAgMCAwIDdoNWExLjUgMS41IDAgMCAxIDAgM0g2Ij48L3BhdGg+PC9zdmc+" class="nav-icon" alt="Revenue">
-                        Revenue Reports
-                    </a></li>
-                    <li><a href="#">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxwb2x5bGluZSBwb2ludHM9IjEyIDYgMTIgMTIgMTYuNSAxNCI+PC9wb2x5bGluZT48L3N2Zz4=" class="nav-icon" alt="Queue">
-                        Queue Reports
-                    </a></li>
-                </ul>
-            </div>
         </div>
     </nav>
 
@@ -430,7 +529,7 @@
         <header class="header">
             <div class="header-content">
                 <div class="header-title">
-                    <h1>Admin Dashboard</h1>
+                    <h1>Customer Management</h1>
                 </div>
                 <div class="header-actions">
                     <div class="user-profile">
@@ -443,50 +542,90 @@
 
         <!-- Dashboard Content -->
         <main class="dashboard-content">
-            <div class="welcome-section">
-                <h2>Welcome Back, Administrator</h2>
-                <p>Manage your barbershop operations efficiently from this dashboard</p>
+            <div class="page-header">
+                <h2 class="page-title">Manage Customers</h2>
+                <a href="admindashboard.html" class="back-link">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTE5IDEySDVNMTIgMTlsLTctNyA3LTciPjwvcGF0aD48L3N2Zz4=" class="back-icon" alt="Back">
+                    Back to Dashboard
+                </a>
             </div>
 
-            <div class="stats-grid">
+            <!-- Stats Summary -->
+            <div class="stats-summary">
                 <div class="stat-card">
-                    <div class="stat-value">12</div>
-                    <div class="stat-label">Active Barbers</div>
-                </div>
-                <div class="stat-card barber">
-                    <div class="stat-value">156</div>
+                    <div class="stat-value" id="totalCustomers">0</div>
                     <div class="stat-label">Total Customers</div>
                 </div>
-                <div class="stat-card customer">
-                    <div class="stat-value">8</div>
-                    <div class="stat-label">In Queue</div>
+                <div class="stat-card">
+                    <div class="stat-value" id="activeCustomers">0</div>
+                    <div class="stat-label">Active Today</div>
                 </div>
-                <div class="stat-card queue">
-                    <div class="stat-value">94%</div>
-                    <div class="stat-label">Satisfaction Rate</div>
+                <div class="stat-card">
+                    <div class="stat-value" id="newCustomers">0</div>
+                    <div class="stat-label">New This Week</div>
                 </div>
             </div>
 
-            <div class="quick-actions">
-                <h3>Quick Actions</h3>
-                <div class="action-buttons">
-                    <a href="manageBarber.jsp" class="action-btn">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMzM0MTU1IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIwIDIxdi0yYTQgNCAwIDAgMC00LTRINGE0IDQgMCAwIDAtNCA0djIiPjwvcGF0aD48Y2lyY2xlIGN4PSIxMiIgY3k9IjciIHI9IjQiPjwvY2lyY2xlPjwvc3ZnPg==" class="action-icon" alt="Barbers">
-                        Manage Barbers
-                    </a>
-                    <a href="manageCustomer.jsp" class="action-btn">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMzM0MTU1IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTE3IDIxdi0yYTQgNCAwIDAgMC00LTRINS00YTQgNCAwIDAgMC00IDR2MiI+PC9wYXRoPjxjaXJjbGUgY3g9IjkiIGN5PSI3IiByPSI0Ij48L2NpcmNsZT48cGF0aCBkPSJNMjMgMjF2LTJhNCA0IDAgMCAwLTMtMy44NyI+PC9wYXRoPjxwYXRoIGQ9Ik0xNiAzLjEzYTQgNCAwIDAgMSAwIDcuNzUiPjwvcGF0aD48L3N2Zz4=" class="action-icon" alt="Customers">
-                        Manage Customers
-                    </a>
-                    <a href="#" class="action-btn">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMzM0MTU1IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBvbHlsaW5lIHBvaW50cz0iMTggMjAgNiAyMCA2IDEwIj48L3BvbHlsaW5lPjxwb2x5bGluZSBwb2ludHM9IjEyIDE2IDE4IDEwIDEyIDEwIj48L3BvbHlsaW5lPjxwb2x5bGluZSBwb2ludHM9IjYgMTIgMTIgMTIgMTIgNiI+PC9wb2x5bGluZT48L3N2Zz4=" class="action-icon" alt="Reports">
-                        View Reports
-                    </a>
-                    <a href="#" class="action-btn">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMzM0MTU1IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMyI+PC9jaXJjbGU+PHBhdGggZD0iTTE5LjQgMTVhMS42NSAxLjY1IDAgMCAwIC4zMyAxLjgybC4wNi4wNmEyIDIgMCAwIDEgMCAyLjgzIDIgMiAwIDAgMS0yLjgzIDBsLS4wNi0uMDZhMS42NSAxLjY1IDAgMCAwLTEuODItLjMzIDEuNjUgMS42NSAwIDAgMC0xIDFuNTEgMS42NSAxLjY1IDAgMCAwLS45MCA5MCAxLjY1IDEuNjUgMCAwIDAgMS41MSAxSDFybTE2LTZ2LjAxIj48L3BhdGg+PC9zdmc+" class="action-icon" alt="Settings">
-                        System Settings
-                    </a>
-                </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Contact</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%
+                        int customerCount = 0;
+                        try {
+                            Connection con = ConnectDB.getConnect();
+                            String sql = "select * from customer";
+                            PreparedStatement ps1 = con.prepareStatement(sql);
+                            ResultSet rs = ps1.executeQuery();
+                            
+                            boolean hasData = false;
+                            
+                            while(rs.next()) {
+                                hasData = true;
+                                customerCount++;
+                        %>
+                        <tr>
+                            <td><%=rs.getString(1) %></td>
+                            <td><%=rs.getString(2) %></td>
+                            <td><%=rs.getString(3) %></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="deleteCustomer.jsp?cid=<%= rs.getInt("cid") %>" class="btn btn-delete" onclick="return confirmDelete()">
+                                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTMgNmgyMk0xOSA2djE0YTIgMiAwIDAgMS0yIDJIN2EyIDIgMCAwIDEtMi0yVjZtMyAwVjRhMiAyIDAgMCAxIDItMmg0YTIgMiAwIDAgMSAyIDJ2MiI+PC9wYXRoPjwvc3ZnPg==" class="btn-icon" alt="Delete">
+                                        Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <%
+                            }
+                            
+                            if (!hasData) {
+                        %>
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state">
+                                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOTRBM0I4IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTE2IDIxdi0yYTQgNCAwIDAgMC00LTRINGE0IDQgMCAwIDAtNCA0djIiPjwvcGF0aD48Y2lyY2xlIGN4PSI5IiBjeT0iNyIgcj0iNCI+PC9jaXJjbGU+PHBhdGggZD0iTTIyIDIxdi0yYTQgNCAwIDAgMC0zLTMuODciPjwvcGF0aD48cGF0aCBkPSJNMTYgMy4xM2E0IDQgMCAwIDEgMCA3Ljc1Ij48L3BhdGg+PC9zdmc+" class="empty-icon" alt="No Customers">
+                                    <h3>No Customers Found</h3>
+                                    <p>There are currently no customers registered in the system.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        <%
+                            }
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                        %>
+                    </tbody>
+                </table>
             </div>
         </main>
 
@@ -524,6 +663,20 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('mobile-open');
+            });
+            
+            // Update customer stats
+            const customerCount = <%= customerCount %>;
+            document.getElementById('totalCustomers').textContent = customerCount;
+            document.getElementById('activeCustomers').textContent = Math.floor(customerCount * 0.3); // Simulate 30% active
+            document.getElementById('newCustomers').textContent = Math.floor(customerCount * 0.1); // Simulate 10% new
+            
             // Add active state to navigation links
             const navLinks = document.querySelectorAll('.nav-links a');
             navLinks.forEach(link => {
@@ -533,55 +686,37 @@
                 });
             });
 
-            // Simulate dynamic stats update
-            function updateStats() {
-                const stats = document.querySelectorAll('.stat-value');
-                stats.forEach(stat => {
-                    const currentValue = parseInt(stat.textContent);
-                    if (!isNaN(currentValue)) {
-                        // Simulate small random changes
-                        const change = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
-                        const newValue = Math.max(0, currentValue + change);
-                        stat.textContent = newValue;
-                    }
-                });
-            }
-
-            // Update stats every 30 seconds
-            setInterval(updateStats, 30000);
-
-            // Add loading animation to action buttons
-            const actionButtons = document.querySelectorAll('.action-btn');
-            actionButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    const originalHTML = this.innerHTML;
-                    this.innerHTML = '<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxwb2x5bGluZSBwb2ludHM9IjEyIDYgMTIgMTIgMTYuNSAxNCI+PC9wb2x5bGluZT48L3N2Zz4=" class="action-icon" alt="Loading">Loading...';
-                    this.style.opacity = '0.8';
-                    
-                    setTimeout(() => {
-                        this.innerHTML = originalHTML;
-                        this.style.opacity = '1';
-                    }, 1500);
-                });
-            });
-
             // User profile interaction
             const userProfile = document.querySelector('.user-profile');
             userProfile.addEventListener('click', function() {
                 alert('Admin profile menu would open here');
             });
 
-            // Welcome message based on time of day
-            const welcomeTitle = document.querySelector('.welcome-section h2');
-            const hour = new Date().getHours();
-            let greeting = 'Welcome Back';
-            
-            if (hour < 12) greeting = 'Good Morning';
-            else if (hour < 18) greeting = 'Good Afternoon';
-            else greeting = 'Good Evening';
-            
-            welcomeTitle.textContent = `${greeting}, Administrator`;
+            // Add loading animation to action buttons
+            const actionButtons = document.querySelectorAll('.btn');
+            actionButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    if (!this.classList.contains('btn-delete') || confirmDelete()) {
+                        const originalHTML = this.innerHTML;
+                        this.innerHTML = '<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxwb2x5bGluZSBwb2ludHM9IjEyIDYgMTIgMTIgMTYuNSAxNCI+PC9wb2x5bGluZT48L3N2Zz4=" class="btn-icon" alt="Loading">Processing...';
+                        this.style.opacity = '0.8';
+                        this.style.pointerEvents = 'none';
+                        
+                        setTimeout(() => {
+                            this.innerHTML = originalHTML;
+                            this.style.opacity = '1';
+                            this.style.pointerEvents = 'auto';
+                        }, 1500);
+                    } else {
+                        e.preventDefault();
+                    }
+                });
+            });
         });
+
+        function confirmDelete() {
+            return confirm('Are you sure you want to delete this customer? This action cannot be undone.');
+        }
     </script>
 </body>
 </html>

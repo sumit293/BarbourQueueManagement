@@ -3,8 +3,6 @@ package services;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,19 +11,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import dbcon.ConnectDB;
-import pojo.CustomerPojo;
 
 /**
- * Servlet implementation class CustomerLogin
+ * Servlet implementation class CustomerRegister
  */
-@WebServlet("/CustomerLogin")
-public class CustomerLogin extends HttpServlet {
+@WebServlet("/CustomerRegister")
+public class CustomerRegister extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public CustomerLogin() {
+    public CustomerRegister() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -45,46 +42,40 @@ public class CustomerLogin extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 		
+		String cname = request.getParameter("cname");
 		String cemail = request.getParameter("cemail");
+		String cphone = request.getParameter("cphone");
 		String cpassword = request.getParameter("cpassword");
-
-	
 		
-		Connection con = ConnectDB.getConnect();
-		
-		
-
 		try {
+			int id = 0;
+			 Connection con = ConnectDB.getConnect();
+			 String CRegister = "insert into customer(cname, cemail, cphone, cpassword) values(?, ?, ?, ?)";
+			 PreparedStatement ps1 =  con.prepareStatement(CRegister);
+			 ps1.setString(1, cname);
+			 ps1.setString(2, cemail);
+			 ps1.setString(3, cphone);
+			 ps1.setString(4, cpassword);
+			 
+			 
+			 int rs = ps1.executeUpdate();
+			 
+			 if(rs > 0)
+			 {
+				 System.out.println("THE CUSTOMER  IS REGISTERRED SUCCESSFULLY !");
+				 response.sendRedirect("customerLogin.html");
+				 
+			 }
+			 else
+			 {
+				 System.out.println("there  is smething wrong ");
+				 response.sendRedirect("customerRegister.html");
+			 }
 			
-			String s = "select * from customer where  cemail =? and cpassword=?";
-			PreparedStatement ps1 = con.prepareStatement(s);
 			
-			ps1.setString(1, cemail);
-			ps1.setString(2, cpassword);
-			
-			ResultSet rs = ps1.executeQuery();
-			
-			if(rs.next()){
-				
-				int cid = rs.getInt("cid");
-				
-				
-		 
-				CustomerPojo.setCemail(cemail);
-				
-				CustomerPojo.setCpassword(cpassword);
-				CustomerPojo.setCid(cid);
-				
-				response.sendRedirect("Customerdashboard.html");
-				
-			}
-		} catch (SQLException e) {
-		response.sendRedirect("error.html");
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-	
-		
 	}
 
 }

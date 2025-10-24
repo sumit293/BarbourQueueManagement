@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - Barber Queue System</title>
+    <style>
+        /* Modern Professional CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #64748b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --success: #10b981;
+            --accent: #f59e0b;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .register-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            min-height: 600px;
+        }
+
+        .visual-section {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            color: white;
+            text-align: center;
+        }
+
+        .visual-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: cover;
+        }
+
+        .visual-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .barber-icon {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 24px;
+            filter: invert(100%);
+        }
+
+        .visual-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .visual-subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .features-list {
+            list-style: none;
+            text-align: left;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .features-list li {
+            padding: 12px 0;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+        }
+
+        .feature-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            filter: invert(100%);
+        }
+
+        .form-section {
+            padding: 48px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .logo-subtitle {
+            color: var(--secondary);
+            font-size: 14px;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .form-header h1 {
+            color: var(--dark);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            color: var(--secondary);
+            font-size: 16px;
+        }
+
+        .register-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            color: #374151;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .label-icon {
+            width: 16px;
+            height: 16px;
+            filter: invert(40%) sepia(10%) saturate(1000%) hue-rotate(180deg) brightness(90%) contrast(85%);
+        }
+
+        .form-input {
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .password-strength {
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+
+        .strength-meter {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .strength-weak {
+            background: #ef4444;
+            width: 33%;
+        }
+
+        .strength-medium {
+            background: #f59e0b;
+            width: 66%;
+        }
+
+        .strength-strong {
+            background: #10b981;
+            width: 100%;
+        }
+
+        .register-button {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .register-button:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .register-button:active {
+            transform: translateY(0);
+        }
+
+        .button-icon {
+            width: 20px;
+            height: 20px;
+            filter: invert(100%);
+        }
+
+        .login-section {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .login-text {
+            color: var(--secondary);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .login-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .login-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .login-icon {
+            width: 18px;
+            height: 18px;
+            filter: invert(100%);
+        }
+
+        .back-home {
+            display: block;
+            text-align: center;
+            color: var(--secondary);
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 24px;
+            padding: 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .back-home:hover {
+            color: var(--dark);
+            background: var(--light);
+        }
+
+        .back-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            filter: invert(40%) sepia(10%) saturate(1000%) hue-rotate(180deg) brightness(90%) contrast(85%);
+            vertical-align: middle;
+        }
+
+        /* Animation for form focus */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        /* Success animation */
+        @keyframes success {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .success {
+            animation: success 0.5s ease-in-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .register-container {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+            
+            .visual-section {
+                padding: 30px 20px;
+                min-height: 300px;
+            }
+            
+            .barber-icon {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .visual-title {
+                font-size: 24px;
+            }
+            
+            .visual-subtitle {
+                font-size: 16px;
+            }
+            
+            .form-section {
+                padding: 32px 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .register-container {
+                margin: 16px;
+            }
+            
+            .form-header h1 {
+                font-size: 24px;
+            }
+            
+            .logo {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <!-- Visual Section with Images and Benefits -->
+        <div class="visual-section">
+            <div class="visual-content">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIwIDIxdi0yYTQgNCAwIDAgMC00LTRINGE0IDQgMCAwIDAtNCA0djIiPjwvcGF0aD48Y2lyY2xlIGN4PSIxMiIgY3k9IjciIHI9IjQiPjwvY2lyY2xlPjwvc3ZnPg==" class="barber-icon" alt="Barber Service">
+                <h2 class="visual-title">Join Our Community</h2>
+                <p class="visual-subtitle">Experience premium barber services with seamless online booking and queue management</p>
+                
+                <ul class="features-list">
+                    <li>
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTUgMTJoMTQiPjwvcGF0aD48cGF0aCBkPSJNMTIgNWw3IDctNyA3Ij48L3BhdGg+PC9zdmc+" class="feature-icon" alt="Quick">
+                        Quick & Easy Booking
+                    </li>
+                    <li>
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxwb2x5bGluZSBwb2ludHM9IjEyIDYgMTIgMTIgMTYuNSAxNCI+PC9wb2x5bGluZT48L3N2Zz4=" class="feature-icon" alt="Time">
+                        Real-time Queue Updates
+                    </li>
+                    <li>
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIwIDZMOSAxN2wtNS01Ij48L3BhdGg+PC9zdmc+" class="feature-icon" alt="Premium">
+                        Premium Service Guarantee
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Registration Form Section -->
+        <div class="form-section">
+            <div class="logo-container">
+                <div class="logo">BARBERQUEUE</div>
+                <div class="logo-subtitle">Create Your Account</div>
+            </div>
+
+            <div class="form-header">
+                <h1>Join Us Today</h1>
+                <p>Create your account to start booking appointments</p>
+            </div>
+            
+            <form class="register-form" action="CustomerRegister" method="post">
+                <div class="form-group">
+                    <label for="cname">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIwIDIxdi0yYTQgNCAwIDAgMC00LTRINGE0IDQgMCAwIDAtNCA0djIiPjwvcGF0aD48Y2lyY2xlIGN4PSIxMiIgY3k9IjciIHI9IjQiPjwvY2lyY2xlPjwvc3ZnPg==" class="label-icon" alt="Name">
+                        Full Name
+                    </label>
+                    <input type="text" id="cname" name="cname" class="form-input" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cemail">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjE2IiB4PSIyIiB5PSI0IiByeD0iMiIgcnk9IjIiPjwvcmVjdD48cGF0aCBkPSJtMjIgNy04Ljk3IDUuN2ExLjk0IDEuOTQgMCAwIDEtMi4wNiAwTDIgNyI+PC9wYXRoPjwvc3ZnPg==" class="label-icon" alt="Email">
+                        Email Address
+                    </label>
+                    <input type="email" id="cemail" name="cemail" class="form-input" placeholder="Enter your email address" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cphone">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIyIDE2LjkydjNhMiAyIDAgMCAxLTIuMTggMiAxOS43OSAxOS43OSAwIDAgMS04LjYzLTMuMDcgMTkuNSA0OS43NCAwIDAgMS02LTYgMTkuNzkgMTkuNzkgMCAwIDEtMy4wNy04LjY3QTIgMiAwIDAgMSA0LjExIDJoM2EyIDIgMCAwIDEgMiAxLjcyIDEyLjg0IDEyLjg0IDAgMCAwIC43IDIuODEgMiAyIDAgMCAxLS40NSAyLjExTDguMDkgOS45MWExNiAxNiAwIDAgMCA2IDZsMS4yNy0xLjI3YTIgMiAwIDAgMSAyLjExLS40NSAxMi44NCAxMi44NCAwIDAgMCAyLjgxLjdBMiAyIDAgMCAxIDIyIDE2LjkyeiI+PC9wYXRoPjwvc3ZnPg==" class="label-icon" alt="Phone">
+                        Phone Number
+                    </label>
+                    <input type="text" id="cphone" name="cphone" class="form-input" placeholder="Enter your phone number" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cpassword">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3Qgd2lkdGg9IjE4IiBoZWlnaHQ9IjExIiB4PSIzIiB5PSIxMSIgcng9IjIiIHJ5PSIyIj48L3JlY3Q+PHBhdGggZD0iTTcgMTFWN2E1IDUgMCAwIDEgMTAgMHY0Ij48L3BhdGg+PC9zdmc+" class="label-icon" alt="Password">
+                        Password
+                    </label>
+                    <input type="password" id="cpassword" name="cpassword" class="form-input" placeholder="Create a strong password" required>
+                    <div class="password-strength">
+                        <div class="strength-meter" id="passwordStrength"></div>
+                    </div>
+                </div>
+                
+                <button class="register-button" type="submit">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTE2IDIxdi0yYTQgNCAwIDAgMC00LTRINGE0IDQgMCAwIDAtNCA0djIiPjwvcGF0aD48Y2lyY2xlIGN4PSI5IiBjeT0iNyIgcj0iNCI+PC9jaXJjbGU+PHBhdGggZD0iTTIyIDIxdi0yYTQgNCAwIDAgMC0zLTMuODciPjwvcGF0aD48cGF0aCBkPSJNMTYgMy4xM2E0IDQgMCAwIDEgMCA3Ljc1Ij48L3BhdGg+PC9zdmc+" class="button-icon" alt="Register">
+                    Create Account
+                </button>
+            </form>
+            
+            <div class="login-section">
+                <p class="login-text">Already have an account?</p>
+                <a href="customerLogin.html" class="login-button">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTE1IDNINDhjMS4xIDAgMiAuOSAyIDJ2MTRjMCAxLjEtLjkgMi0yIDJINGMtMS4xIDAtMi0uOS0yLTJWNWMwLTEuMS45LTIgMi0yeiI+PC9wYXRoPjxwb2x5bGluZSBwb2ludHM9IjEwLDE3IDE1LDEyIDEwLDciPjwvcG9seWxpbmU+PC9zdmc+" class="login-icon" alt="Login">
+                    Sign In to Your Account
+                </a>
+            </div>
+            
+            <a href="index.html" class="back-home">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTMgOWwxMi02IDEyIDZNOSAyMnYtMTJhMiAyIDAgMCAxIDItMmg0YTIgMiAwIDAgMSAyIDJ2MTIiPjwvcGF0aD48L3N2Zz4=" class="back-icon" alt="Home">
+                Back to Home
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('.register-form');
+            const inputs = document.querySelectorAll('.form-input');
+            const registerButton = document.querySelector('.register-button');
+            const passwordInput = document.getElementById('cpassword');
+            const passwordStrength = document.getElementById('passwordStrength');
+            
+            // Password strength indicator
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                let strength = 0;
+                
+                if (password.length >= 8) strength++;
+                if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+                if (password.match(/\d/)) strength++;
+                if (password.match(/[^a-zA-Z\d]/)) strength++;
+                
+                // Update strength meter
+                passwordStrength.className = 'strength-meter';
+                if (password.length === 0) {
+                    passwordStrength.style.width = '0%';
+                } else if (strength <= 1) {
+                    passwordStrength.classList.add('strength-weak');
+                } else if (strength <= 3) {
+                    passwordStrength.classList.add('strength-medium');
+                } else {
+                    passwordStrength.classList.add('strength-strong');
+                }
+            });
+            
+            // Input focus effects
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('focused');
+                });
+            });
+            
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+                
+                // Basic validation
+                inputs.forEach(input => {
+                    if (!input.value.trim()) {
+                        isValid = false;
+                        input.style.borderColor = 'var(--danger)';
+                        input.classList.add('shake');
+                        setTimeout(() => {
+                            input.classList.remove('shake');
+                        }, 500);
+                    }
+                });
+                
+                // Email validation
+                const emailInput = document.getElementById('cemail');
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (emailInput.value && !emailRegex.test(emailInput.value)) {
+                    isValid = false;
+                    emailInput.style.borderColor = 'var(--danger)';
+                    emailInput.classList.add('shake');
+                    setTimeout(() => {
+                        emailInput.classList.remove('shake');
+                    }, 500);
+                }
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    return;
+                }
+                
+                // Show loading state
+                const originalText = registerButton.innerHTML;
+                registerButton.innerHTML = '<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxwb2x5bGluZSBwb2ludHM9IjEyIDYgMTIgMTIgMTYuNSAxNCI+PC9wb2x5bGluZT48L3N2Zz4=" class="button-icon" alt="Loading"> Creating Account...';
+                registerButton.disabled = true;
+                registerButton.style.opacity = '0.8';
+                
+                // Simulate loading for demo
+                setTimeout(() => {
+                    registerButton.innerHTML = originalText;
+                    registerButton.disabled = false;
+                    registerButton.style.opacity = '1';
+                    registerButton.classList.add('success');
+                    setTimeout(() => {
+                        registerButton.classList.remove('success');
+                    }, 500);
+                }, 2000);
+            });
+            
+            // Real-time validation
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    if (this.checkValidity()) {
+                        this.style.borderColor = 'var(--success)';
+                    } else {
+                        this.style.borderColor = '#e5e7eb';
+                    }
+                });
+            });
+            
+            // Add some interactive elements
+            const loginButton = document.querySelector('.login-button');
+            loginButton.addEventListener('click', function(e) {
+                // Add loading state for demo
+                const originalHTML = this.innerHTML;
+                this.innerHTML = '<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxwb2x5bGluZSBwb2ludHM9IjEyIDYgMTIgMTIgMTYuNSAxNCI+PC9wb2x5bGluZT48L3N2Zz4=" class="login-icon" alt="Loading"> Redirecting...';
+                this.style.opacity = '0.8';
+                
+                setTimeout(() => {
+                    this.innerHTML = originalHTML;
+                    this.style.opacity = '1';
+                }, 1500);
+            });
+        });
+    </script>
+</body>
+</html>

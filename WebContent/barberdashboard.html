@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barber Dashboard - Professional Portal</title>
+    <style>
+        /* Modern Professional CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #f59e0b;
+            --primary-dark: #d97706;
+            --secondary: #64748b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            background: #f1f5f9;
+            color: #334155;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--dark);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            padding: 24px 20px;
+            border-bottom: 1px solid #334155;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .logo-subtitle {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .nav-menu {
+            padding: 20px 0;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-title {
+            font-size: 12px;
+            color: #94a3b8;
+            padding: 0 20px 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin: 4px 0;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-links a:hover {
+            background: #334155;
+            color: white;
+            border-left-color: var(--primary);
+        }
+
+        .nav-links a.active {
+            background: #334155;
+            color: white;
+            border-left-color: var(--primary);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            filter: invert(85%) sepia(10%) saturate(250%) hue-rotate(180deg) brightness(95%) contrast(85%);
+        }
+
+        .nav-links a:hover .nav-icon,
+        .nav-links a.active .nav-icon {
+            filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        .header {
+            background: white;
+            padding: 0 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+        }
+
+        .header-title h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: var(--light);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            flex: 1;
+            padding: 32px;
+        }
+
+        .welcome-section {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 32px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-section h2 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .welcome-section p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--primary);
+            transition: transform 0.3s ease;
+            text-align: center;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card.appointments {
+            border-left-color: var(--success);
+        }
+
+        .stat-card.services {
+            border-left-color: #8b5cf6;
+        }
+
+        .stat-card.earnings {
+            border-left-color: var(--warning);
+        }
+
+        .stat-card.rating {
+            border-left-color: #ec4899;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: var(--secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .quick-actions {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 32px;
+        }
+
+        .quick-actions h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--light);
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .action-btn:hover .action-icon {
+            filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
+        }
+
+        .action-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            filter: invert(40%) sepia(10%) saturate(1000%) hue-rotate(180deg) brightness(90%) contrast(85%);
+        }
+
+        .today-appointments {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .today-appointments h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-icon {
+            width: 20px;
+            height: 20px;
+            filter: invert(40%) sepia(10%) saturate(1000%) hue-rotate(180deg) brightness(90%) contrast(85%);
+        }
+
+        .appointment-list {
+            list-style: none;
+        }
+
+        .appointment-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .appointment-item:last-child {
+            border-bottom: none;
+        }
+
+        .appointment-time {
+            width: 80px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .appointment-details {
+            flex: 1;
+        }
+
+        .appointment-client {
+            font-weight: 500;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .appointment-service {
+            font-size: 14px;
+            color: var(--secondary);
+        }
+
+        .appointment-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-confirmed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-completed {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--secondary);
+        }
+
+        .empty-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--secondary);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 24px 32px;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-section h4 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            color: white;
+        }
+
+        .footer-section p, .footer-section a {
+            color: #94a3b8;
+            font-size: 14px;
+            text-decoration: none;
+            line-height: 1.6;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 24px;
+            margin-top: 24px;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-content {
+                padding: 20px 16px;
+            }
+            
+            .header {
+                padding: 0 16px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .welcome-section {
+                padding: 24px;
+            }
+            
+            .welcome-section h2 {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .appointment-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .appointment-time {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        ☰ Menu
+    </button>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="logo-container">
+            <div class="logo">BARBERQUEUE</div>
+            <div class="logo-subtitle">BARBER DASHBOARD</div>
+        </div>
+
+        <div class="nav-menu">
+            <div class="nav-section">
+                <div class="nav-title">Main Navigation</div>
+                <ul class="nav-links">
+                    <li><a href="#" class="active">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3Qgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB4PSIzIiB5PSIzIiByeD0iMiIgcnk9IjIiPjwvcmVjdD48cGF0aCBkPSJNMyA5aDE4TTkgMjFWOUIiPjwvcGF0aD48L3N2Zz4=" class="nav-icon" alt="Dashboard">
+                        Dashboard
+                    </a></li>
+                    <li><a href="manageAppointment.jsp">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTkgNUg3YTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxMGEyIDIgMCAwIDAgMi0yVjdhMiAyIDAgMCAwLTItMmgtMm0tOSA5aDZtLTYgNGg2bTgtNFY0bTAtNnY0Ij48L3BhdGg+PC9zdmc+" class="nav-icon" alt="Appointments">
+                        Manage Appointments
+                    </a></li>
+                    <li><a href="ManageServices.jsp">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIwIDIxdi0yYTQgNCAwIDAgMC00LTRINGE0IDQgMCAwIDAtNCA0djIiPjwvcGF0aD48Y2lyY2xlIGN4PSIxMiIgY3k9IjciIHI9IjQiPjwvY2lyY2xlPjwvc3ZnPg==" class="nav-icon" alt="Services">
+                        Manage Services
+                    </a></li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Services</div>
+                <ul class="nav-links">
+                    <li><a href="addServices.html">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDV2MTQiPjwvcGF0aD48cGF0aCBkPSJNNSAxMmgxNCI+PC9wYXRoPjwvc3ZnPg==" class="nav-icon" alt="Add">
+                        Add Services
+                    </a></li>
+                    <li><a href="#">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDE1djciPjwvcGF0aD48cGF0aCBkPSJNMTYuMDYgMTEuOTRhMyAzIDAgMSAwLTQuMTIgMEwxMiAxNS45OWwtLjU0LS41NGExIDEgMCAwIDAtMS4zMiAxLjMzbDMgM2ExIDEgMCAwIDAgMS40MiAwbDMtM2ExIDEgMCAwIDAtMS40Mi0xLjQyeiI+PC9wYXRoPjwvc3ZnPg==" class="nav-icon" alt="History">
+                        Service History
+                    </a></li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Account</div>
+                <ul class="nav-links">
+                    <li><a href="#">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDEyYTMgMyAwIDEgMCAwLTYgMyAzIDAgMCAwIDAgNnoiPjwvcGF0aD48cGF0aCBkPSJNMTkgMjF2LTJhNCA0IDAgMCAwLTQtNEg5YTQgNCAwIDAgMC00IDR2MiI+PC9wYXRoPjwvc3ZnPg==" class="nav-icon" alt="Profile">
+                        My Profile
+                    </a></li>
+                    <li><a href="index.html">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTE5IDEySDVNMTIgMTlsLTctNyA3LTciPjwvcGF0aD48L3N2Zz4=" class="nav-icon" alt="Logout">
+                        Back to Home
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-title">
+                    <h1>Barber Dashboard</h1>
+                </div>
+                <div class="header-actions">
+                    <div class="user-profile">
+                        <div class="user-avatar">B</div>
+                        <span>Professional Barber</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <main class="dashboard-content">
+            <div class="welcome-section">
+                <h2 id="welcomeMessage">Welcome Back, Professional!</h2>
+                <p>Manage your appointments, services, and grow your business efficiently</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="todayAppointments">0</div>
+                    <div class="stat-label">Today's Appointments</div>
+                </div>
+                <div class="stat-card appointments">
+                    <div class="stat-value" id="weeklyAppointments">0</div>
+                    <div class="stat-label">Weekly Appointments</div>
+                </div>
+                <div class="stat-card services">
+                    <div class="stat-value" id="activeServices">0</div>
+                    <div class="stat-label">Active Services</div>
+                </div>
+                <div class="stat-card earnings">
+                    <div class="stat-value" id="monthlyEarnings">$0</div>
+                    <div class="stat-label">Monthly Earnings</div>
+                </div>
+                <div class="stat-card rating">
+                    <div class="stat-value" id="customerRating">0.0</div>
+                    <div class="stat-label">Customer Rating</div>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+                <h3>Quick Actions</h3>
+                <div class="action-buttons">
+                    <a href="manageAppointment.jsp" class="action-btn">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMzM0MTU1IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTkgNUg3YTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxMGEyIDIgMCAwIDAgMi0yVjdhMiAyIDAgMCAwLTItMmgtMm0tOSA5aDZtLTYgNGg2bTgtNFY0bTAtNnY0Ij48L3BhdGg+PC9zdmc+" class="action-icon" alt="Appointments">
+                        Manage Appointments
+                    </a>
+                    <a href="ManageServices.jsp" class="action-btn">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMzM0MTU1IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIwIDIxdi0yYTQgNCAwIDAgMC00LTRINGE0IDQgMCAwIDAtNCA0djIiPjwvcGF0aD48Y2lyY2xlIGN4PSIxMiIgY3k9IjciIHI9IjQiPjwvY2lyY2xlPjwvc3ZnPg==" class="action-icon" alt="Services">
+                        Manage Services
+                    </a>
+                    <a href="addServices.html" class="action-btn">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMzM0MTU1IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDV2MTQiPjwvcGF0aD48cGF0aCBkPSJNNSAxMmgxNCI+PC9wYXRoPjwvc3ZnPg==" class="action-icon" alt="Add">
+                        Add New Service
+                    </a>
+                  
+                </div>
+            </div>
+
+            <div class="today-appointments">
+                <h3>
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMzM0MTU1IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxwb2x5bGluZSBwb2ludHM9IjEyIDYgMTIgMTIgMTYuNSAxNCI+PC9wb2x5bGluZT48L3N2Zz4=" class="section-icon" alt="Today">
+                    Today's Appointments
+                </h3>
+                <div id="appointmentsContainer">
+                    <div class="loading-state">
+                        <div class="loading-spinner"></div>
+                        <p>Loading today's appointments...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Contact Information</h4>
+                    <p>Email: barber@barberqueue.com</p>
+                    <p>Phone: +1 (555) 123-4567</p>
+                    <p>Support: support@barberqueue.com</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <p><a href="manageAppointment.jsp">Manage Appointments</a></p>
+                    <p><a href="ManageServices.jsp">Manage Services</a></p>
+                    <p><a href="addServices.html">Add Services</a></p>
+                    <p><a href="index.html">Home Page</a></p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Business Hours</h4>
+                    <p>Monday - Friday: 8:00 AM - 8:00 PM</p>
+                    <p>Saturday: 9:00 AM - 6:00 PM</p>
+                    <p>Sunday: 10:00 AM - 4:00 PM</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Barber Queue Management System. All rights reserved. | Privacy Policy | Terms of Service</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('mobile-open');
+            });
+            
+            // Add active state to navigation links
+            const navLinks = document.querySelectorAll('.nav-links a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // User profile interaction
+            const userProfile = document.querySelector('.user-profile');
+            userProfile.addEventListener('click', function() {
+                alert('Barber profile menu would open here');
+            });
+
+            // Add loading animation to action buttons
+            const actionButtons = document.querySelectorAll('.action-btn');
+            actionButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const originalHTML = this.innerHTML;
+                    this.innerHTML = '<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxwb2x5bGluZSBwb2ludHM9IjEyIDYgMTIgMTIgMTYuNSAxNCI+PC9wb2x5bGluZT48L3N2Zz4=" class="action-icon" alt="Loading"> Loading...';
+                    this.style.opacity = '0.8';
+                    this.style.pointerEvents = 'none';
+                    
+                    setTimeout(() => {
+                        this.innerHTML = originalHTML;
+                        this.style.opacity = '1';
+                        this.style.pointerEvents = 'auto';
+                    }, 1500);
+                });
+            });
+
+            // Welcome message based on time of day
+            const welcomeMessage = document.getElementById('welcomeMessage');
+            const hour = new Date().getHours();
+            let greeting = 'Welcome Back';
+            
+            if (hour < 12) greeting = 'Good Morning';
+            else if (hour < 18) greeting = 'Good Afternoon';
+            else greeting = 'Good Evening';
+            
+            welcomeMessage.textContent = `${greeting}, Professional!`;
+
+            // Simulate loading dashboard data
+            loadDashboardData();
+        });
+
+        // Function to load dashboard data dynamically
+        function loadDashboardData() {
+            // Simulate API call delay
+            setTimeout(() => {
+                // In a real application, these values would come from your backend
+                // For now, we'll use placeholder data that can be easily replaced
+                
+                // Update statistics
+                document.getElementById('todayAppointments').textContent = '8';
+                document.getElementById('weeklyAppointments').textContent = '24';
+                document.getElementById('activeServices').textContent = '6';
+                document.getElementById('monthlyEarnings').textContent = '$1,240';
+                document.getElementById('customerRating').textContent = '4.8';
+
+                // Load today's appointments
+                loadTodaysAppointments();
+            }, 1000);
+        }
+
+        // Function to load today's appointments
+        function loadTodaysAppointments() {
+            const appointmentsContainer = document.getElementById('appointmentsContainer');
+            
+            // Simulate API call for appointments
+            setTimeout(() => {
+                // This is where you would fetch real appointment data from your backend
+                // For demonstration, we'll create an empty state
+                // In your actual implementation, you would loop through real appointment data
+                
+                appointmentsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOTRBM0I4IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTkgNUg3YTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxMGEyIDIgMCAwIDAgMi0yVjdhMiAyIDAgMCAwLTItMmgtMm0tOSA5aDZtLTYgNGg2bTgtNFY0bTAtNnY0Ij48L3BhdGg+PC9zdmc+" class="empty-icon" alt="No Appointments">
+                        <h3>No Appointments Today</h3>
+                        <p>You don't have any appointments scheduled for today.</p>
+                    </div>
+                `;
+
+                // Example of how to display appointments when data is available:
+                /*
+                if (appointments.length > 0) {
+                    let appointmentsHTML = '<ul class="appointment-list">';
+                    appointments.forEach(appointment => {
+                        appointmentsHTML += `
+                            <li class="appointment-item">
+                                <div class="appointment-time">${appointment.time}</div>
+                                <div class="appointment-details">
+                                    <div class="appointment-client">${appointment.clientName}</div>
+                                    <div class="appointment-service">${appointment.service}</div>
+                                </div>
+                                <div class="appointment-status status-${appointment.status}">${appointment.status}</div>
+                            </li>
+                        `;
+                    });
+                    appointmentsHTML += '</ul>';
+                    appointmentsContainer.innerHTML = appointmentsHTML;
+                } else {
+                    // Show empty state
+                    appointmentsContainer.innerHTML = `...empty state HTML...`;
+                }
+                */
+
+            }, 1500);
+        }
+
+        // Function to refresh dashboard data (can be called periodically)
+        function refreshDashboard() {
+            loadDashboardData();
+        }
+
+        // Refresh dashboard every 5 minutes (300000 ms)
+        // setInterval(refreshDashboard, 300000);
+    </script>
+</body>
+</html>

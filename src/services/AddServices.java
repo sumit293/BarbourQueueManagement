@@ -3,8 +3,6 @@ package services;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,19 +11,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import dbcon.ConnectDB;
-import pojo.CustomerPojo;
 
 /**
- * Servlet implementation class CustomerLogin
+ * Servlet implementation class AddServices
  */
-@WebServlet("/CustomerLogin")
-public class CustomerLogin extends HttpServlet {
+@WebServlet("/AddServices")
+public class AddServices extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public CustomerLogin() {
+    public AddServices() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -44,47 +41,39 @@ public class CustomerLogin extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
+		int bid  =  0;
 		
-		String cemail = request.getParameter("cemail");
-		String cpassword = request.getParameter("cpassword");
-
-	
-		
-		Connection con = ConnectDB.getConnect();
-		
-		
-
-		try {
+			String sname = request.getParameter("sname");
+			String sdesc = request.getParameter("sdesc");
+			String sprice= request.getParameter("sprice");
 			
-			String s = "select * from customer where  cemail =? and cpassword=?";
-			PreparedStatement ps1 = con.prepareStatement(s);
-			
-			ps1.setString(1, cemail);
-			ps1.setString(2, cpassword);
-			
-			ResultSet rs = ps1.executeQuery();
-			
-			if(rs.next()){
+			try {
+				Connection con   =ConnectDB.getConnect();
+				String services = "insert into services(sname, sdesc, sprice) values(?, ?, ?)";
+				PreparedStatement ps1 = con.prepareStatement(services);
 				
-				int cid = rs.getInt("cid");
+				ps1.setString(1, sname);
+				ps1.setString(2, sdesc);
+				ps1.setString(3, sprice);
 				
+				int rs = ps1.executeUpdate();
 				
-		 
-				CustomerPojo.setCemail(cemail);
+				if(rs > 0){
+					System.out.println("THIS SERVICE IS ADDED SUCCSSFULLY");
+					response.sendRedirect("barberdashboard.html");
+					
+				}
+				else
+				{
+					System.out.println("There is somethoiong error in  it ");
+					response.sendRedirect("error.html");
+				}
 				
-				CustomerPojo.setCpassword(cpassword);
-				CustomerPojo.setCid(cid);
-				
-				response.sendRedirect("Customerdashboard.html");
-				
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (SQLException e) {
-		response.sendRedirect("error.html");
-			e.printStackTrace();
-		}
-		
-	
-		
+			
+			
 	}
 
 }

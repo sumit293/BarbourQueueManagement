@@ -1,19 +1,389 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
+    <meta charset="ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barber Queue Management System</title>
+    <style>
+        /* Modern Professional CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            line-height: 1.6;
+            color: #334155;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+            padding-top: 32px;
+        }
+        
+        .header h1 {
+            color: #1e293b;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.025em;
+        }
+        
+        .header p {
+            color: #64748b;
+            font-size: 18px;
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto 60px;
+            width: 100%;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 32px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .card.admin .card-icon {
+            background: #3b82f6;
+        }
+        
+        .card.customer .card-icon {
+            background: #10b981;
+        }
+        
+        .card.barber .card-icon {
+            background: #f59e0b;
+        }
+        
+        .card h3 {
+            color: #1e293b;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        
+        .card p {
+            color: #64748b;
+            font-size: 15px;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+        
+        .features-list {
+            list-style: none;
+            margin-bottom: 24px;
+        }
+        
+        .features-list li {
+            padding: 8px 0;
+            color: #475569;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .features-list li:before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        
+        .card-button {
+            display: inline-block;
+            background: #1e293b;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            margin-top: auto;
+        }
+        
+        .card-button:hover {
+            background: #334155;
+            transform: translateY(-1px);
+        }
+        
+        .card.admin .card-button {
+            background: #3b82f6;
+        }
+        
+        .card.admin .card-button:hover {
+            background: #2563eb;
+        }
+        
+        .card.customer .card-button {
+            background: #10b981;
+        }
+        
+        .card.customer .card-button:hover {
+            background: #059669;
+        }
+        
+        .card.barber .card-button {
+            background: #f59e0b;
+        }
+        
+        .card.barber .card-button:hover {
+            background: #d97706;
+        }
+        
+        .footer {
+            background: #1e293b;
+            color: white;
+            padding: 48px 20px;
+            margin-top: auto;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+        
+        .footer-section h4 {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        
+        .footer-section p, .footer-section a {
+            color: #cbd5e1;
+            font-size: 14px;
+            text-decoration: none;
+            line-height: 1.8;
+        }
+        
+        .footer-section a:hover {
+            color: white;
+        }
+        
+        .contact-info {
+            list-style: none;
+        }
+        
+        .contact-info li {
+            padding: 6px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .contact-info li:before {
+            content: "•";
+            color: #3b82f6;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 40px auto 0;
+            padding-top: 24px;
+            border-top: 1px solid #334155;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .cards-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 28px;
+            }
+            
+            .header p {
+                font-size: 16px;
+            }
+            
+            .card {
+                padding: 24px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="header">
+        <h1>Barber Queue Management System</h1>
+        <p>Streamline your barbershop operations with our professional queue management solution</p>
+    </div>
 
-  <div class="button-container">
-    <a href="adminlogin.html" class="role-button">ADMIN</a>
-    <br>
-    <a href="customerLogin.html" class="role-button">CUSTOMER</a>
-    <br>
-    <a href="barberLogin.html" class="role-button">BARBER</a>
-  </div>
+    <div class="cards-container">
+        <div class="card admin">
+            <div class="card-icon">A</div>
+            <h3>Admin Portal</h3>
+            <p>Complete control and oversight of your barbershop operations. Manage staff, view analytics, and optimize business performance.</p>
+            <ul class="features-list">
+                <li>Real-time queue monitoring</li>
+                <li>Staff performance analytics</li>
+          
+               
+                <li>Customer database management</li>
+            </ul>
+            <a href="adminlogin.html" class="card-button">Access Admin Portal</a>
+        </div>
+        
+        <div class="card customer">
+            <div class="card-icon">C</div>
+            <h3>Customer Portal</h3>
+            <p>Seamless booking experience for your customers. Join virtual queues, get notifications, and manage appointments effortlessly.</p>
+            <ul class="features-list">
+                <li>Join virtual waiting queue</li>
+              
+              
+                <li>Service selection</li>
+             
+            </ul>
+            <a href="customerLogin.html" class="card-button">Access Customer Portal</a>
+        </div>
+        
+        <div class="card barber">
+            <div class="card-icon">B</div>
+            <h3>Barber Portal</h3>
+            <p>Efficient workflow management for barbers. Handle appointments, track service times, and provide excellent customer service.</p>
+            <ul class="features-list">
+              
+                <li>Mark services completed</li>
+            
+                <li>Customer history</li>
+                <li>Availability management</li>
+            </ul>
+            <a href="barberLogin.html" class="card-button">Access Barber Portal</a>
+        </div>
+    </div>
 
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Contact Information</h4>
+                <ul class="contact-info">
+                    <li>Email: support@barberqueue.com</li>
+                    <li>Phone: +1 (555) 123-4567</li>
+                    <li>Support: help@barberqueue.com</li>
+                    <li>Sales: sales@barberqueue.com</li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Business Hours</h4>
+                <p>Monday - Friday: 8:00 AM - 8:00 PM</p>
+                <p>Saturday: 9:00 AM - 6:00 PM</p>
+                <p>Sunday: 10:00 AM - 4:00 PM</p>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <p><a href="adminlogin.html">Admin Login</a></p>
+                <p><a href="customerLogin.html">Customer Login</a></p>
+                <p><a href="barberLogin.html">Barber Login</a></p>
+                <p><a href="#">System Documentation</a></p>
+            </div>
+            
+            <div class="footer-section">
+                <h4>About Us</h4>
+                <p>Professional queue management solutions for modern barbershops. Streamline operations and enhance customer experience with our cutting-edge system.</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 Barber Queue Management System. All rights reserved. | Privacy Policy | Terms of Service</p>
+        </div>
+    </footer>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            const buttons = document.querySelectorAll('.card-button');
+            
+            // Card hover effects
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+            
+            // Button interactions
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Add loading state
+                    const originalText = this.textContent;
+                    this.textContent = 'Redirecting...';
+                    this.style.opacity = '0.8';
+                    
+                    setTimeout(() => {
+                        window.location.href = this.getAttribute('href');
+                    }, 800);
+                });
+                
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
 </body>
 </html>

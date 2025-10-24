@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Services - Barber Dashboard</title>
+    <style>
+        /* Modern Professional CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #f59e0b;
+            --primary-dark: #d97706;
+            --secondary: #64748b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            background: #f1f5f9;
+            color: #334155;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--dark);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            padding: 24px 20px;
+            border-bottom: 1px solid #334155;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .logo-subtitle {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .nav-menu {
+            padding: 20px 0;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-title {
+            font-size: 12px;
+            color: #94a3b8;
+            padding: 0 20px 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin: 4px 0;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-links a:hover {
+            background: #334155;
+            color: white;
+            border-left-color: var(--primary);
+        }
+
+        .nav-links a.active {
+            background: #334155;
+            color: white;
+            border-left-color: var(--primary);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            filter: invert(85%) sepia(10%) saturate(250%) hue-rotate(180deg) brightness(95%) contrast(85%);
+        }
+
+        .nav-links a:hover .nav-icon,
+        .nav-links a.active .nav-icon {
+            filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        .header {
+            background: white;
+            padding: 0 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+        }
+
+        .header-title h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: var(--light);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            flex: 1;
+            padding: 32px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .page-subtitle {
+            color: var(--secondary);
+            font-size: 16px;
+            margin-top: 8px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 16px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .back-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            filter: invert(100%);
+        }
+
+        /* Form Styles */
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .service-form {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            color: #374151;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .label-icon {
+            width: 16px;
+            height: 16px;
+            filter: invert(40%) sepia(10%) saturate(1000%) hue-rotate(180deg) brightness(90%) contrast(85%);
+        }
+
+        .form-input {
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .price-input-container {
+            position: relative;
+        }
+
+        .price-symbol {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary);
+            font-weight: 500;
+        }
+
+        .price-input {
+            padding-left: 30px;
+        }
+
+        .submit-button {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .submit-button:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .submit-button:active {
+            transform: translateY(0);
+        }
+
+        .button-icon {
+            width: 20px;
+            height: 20px;
+            filter: invert(100%);
+        }
+
+        .form-help {
+            background: #f0f9ff;
+            border: 1px solid #e0f2fe;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 24px;
+        }
+
+        .form-help h4 {
+            color: #0369a1;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .help-icon {
+            width: 16px;
+            height: 16px;
+            filter: invert(40%) sepia(50%) saturate(1500%) hue-rotate(180deg) brightness(90%) contrast(85%);
+        }
+
+        .form-help p {
+            color: #475569;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .form-help ul {
+            color: #475569;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-left: 16px;
+            margin-top: 8px;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 24px 32px;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-section h4 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            color: white;
+        }
+
+        .footer-section p, .footer-section a {
+            color: #94a3b8;
+            font-size: 14px;
+            text-decoration: none;
+            line-height: 1.6;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 24px;
+            margin-top: 24px;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+
+        /* Animation for form focus */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-content {
+                padding: 20px 16px;
+            }
+            
+            .header {
+                padding: 0 16px;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            
+            .form-container {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        ☰ Menu
+    </button>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="logo-container">
+            <div class="logo">BARBERQUEUE</div>
+            <div class="logo-subtitle">BARBER DASHBOARD</div>
+        </div>
+
+        <div class="nav-menu">
+            <div class="nav-section">
+                <div class="nav-title">Main Navigation</div>
+                <ul class="nav-links">
+                    <li><a href="barberdashboard.html">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3Qgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB4PSIzIiB5PSIzIiByeD0iMiIgcnk9IjIiPjwvcmVjdD48cGF0aCBkPSJNMyA5aDE4TTkgMjFWOUIiPjwvcGF0aD48L3N2Zz4=" class="nav-icon" alt="Dashboard">
+                        Dashboard
+                    </a></li>
+                    <li><a href="manageAppointment.jsp">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTkgNUg3YTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxMGEyIDIgMCAwIDAgMi0yVjdhMiAyIDAgMCAwLTItMmgtMm0tOSA5aDZtLTYgNGg2bTgtNFY0bTAtNnY0Ij48L3BhdGg+PC9zdmc+" class="nav-icon" alt="Appointments">
+                        Manage Appointments
+                    </a></li>
+                    <li><a href="ManageServices.jsp">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIwIDIxdi0yYTQgNCAwIDAgMC00LTRINGE0IDQgMCAwIDAtNCA0djIiPjwvcGF0aD48Y2lyY2xlIGN4PSIxMiIgY3k9IjciIHI9IjQiPjwvY2lyY2xlPjwvc3ZnPg==" class="nav-icon" alt="Services">
+                        Manage Services
+                    </a></li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Services</div>
+                <ul class="nav-links">
+                    <li><a href="#" class="active">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDV2MTQiPjwvcGF0aD48cGF0aCBkPSJNNSAxMmgxNCI+PC9wYXRoPjwvc3ZnPg==" class="nav-icon" alt="Add">
+                        Add Services
+                    </a></li>
+                    <li><a href="#">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDE1djciPjwvcGF0aD48cGF0aCBkPSJNMTYuMDYgMTEuOTRhMyAzIDAgMSAwLTQuMTIgMEwxMiAxNS45OWwtLjU0LS41NGExIDEgMCAwIDAtMS4zMiAxLjMzbDMgM2ExIDEgMCAwIDAgMS40MiAwbDMtM2ExIDEgMCAwIDAtMS40Mi0xLjQyeiI+PC9wYXRoPjwvc3ZnPg==" class="nav-icon" alt="History">
+                        Service History
+                    </a></li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Account</div>
+                <ul class="nav-links">
+                    <li><a href="#">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDEyYTMgMyAwIDEgMCAwLTYgMyAzIDAgMCAwIDAgNnoiPjwvcGF0aD48cGF0aCBkPSJNMTkgMjF2LTJhNCA0IDAgMCAwLTQtNEg5YTQgNCAwIDAgMC00IDR2MiI+PC9wYXRoPjwvc3ZnPg==" class="nav-icon" alt="Profile">
+                        My Profile
+                    </a></li>
+                    <li><a href="index.html">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTE5IDEySDVNMTIgMTlsLTctNyA3LTciPjwvcGF0aD48L3N2Zz4=" class="nav-icon" alt="Logout">
+                        Back to Home
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-title">
+                    <h1>Add Services</h1>
+                </div>
+                <div class="header-actions">
+                    <div class="user-profile">
+                        <div class="user-avatar">B</div>
+                        <span>Professional Barber</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <main class="dashboard-content">
+            <div class="page-header">
+                <div>
+                    <h2 class="page-title">Add New Service</h2>
+                    <p class="page-subtitle">Create new services to offer your customers</p>
+                </div>
+                <a href="ManageServices.jsp" class="back-link">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTE5IDEySDVNMTIgMTlsLTctNyA3LTciPjwvcGF0aD48L3N2Zz4=" class="back-icon" alt="Back">
+                    Back to Services
+                </a>
+            </div>
+
+            <div class="form-container">
+                <form class="service-form" action="AddServices" method="post">
+                    <div class="form-group">
+                        <label for="sname">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIwIDIxdi0yYTQgNCAwIDAgMC00LTRINGE0IDQgMCAwIDAtNCA0djIiPjwvcGF0aD48Y2lyY2xlIGN4PSIxMiIgY3k9IjciIHI9IjQiPjwvY2lyY2xlPjwvc3ZnPg==" class="label-icon" alt="Service">
+                            Service Name
+                        </label>
+                        <input type="text" id="sname" name="sname" class="form-input" placeholder="Enter service name (e.g., Haircut, Beard Trim)" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sdesc">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTkgMTJoNiIgLz48cGF0aCBkPSJNMTIgOXY2IiAvPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIiAvPjwvc3ZnPg==" class="label-icon" alt="Description">
+                            Service Description
+                        </label>
+                        <textarea id="sdesc" name="sdesc" class="form-input form-textarea" placeholder="Describe the service in detail. Include what customers can expect, duration, and any special features." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sprice">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDIwVjEwTTQgNGgxNmExIDEgMCAwIDEgMSAxdjZhMSAxIDAgMCAxLTEgMUg0YTEgMSAwIDAgMS0xLTFWNWE0IDQgMCAwIDEgNC00aDhhNCA0IDAgMCAxIDQgNHYxIi8+PC9zdmc+" class="label-icon" alt="Price">
+                            Service Price
+                        </label>
+                        <div class="price-input-container">
+                            <span class="price-symbol">$</span>
+                            <input type="number" id="sprice" name="sprice" class="form-input price-input" placeholder="Enter the price" min="0" step="0.01" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="submit-button">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDV2MTQiPjwvcGF0aD48cGF0aCBkPSJNNSAxMmgxNCI+PC9wYXRoPjwvc3ZnPg==" class="button-icon" alt="Add">
+                        Add Service
+                    </button>
+                </form>
+
+                <div class="form-help">
+                    <h4>
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDM2OWExIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxwYXRoIGQ9Im05IDEyIDIgMiA0LTQiPjwvcGF0aD48L3N2Zz4=" class="help-icon" alt="Tip">
+                        Tips for Creating Great Services
+                    </h4>
+                    <p>Create services that attract customers and clearly communicate what you offer:</p>
+                    <ul>
+                        <li>Use clear, descriptive names that customers will understand</li>
+                        <li>Include duration and what's included in the description</li>
+                        <li>Set competitive prices based on your market and expertise</li>
+                        <li>Consider creating service packages for better value</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Contact Information</h4>
+                    <p>Email: barber@barberqueue.com</p>
+                    <p>Phone: +1 (555) 123-4567</p>
+                    <p>Support: support@barberqueue.com</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <p><a href="barberdashboard.html">Barber Dashboard</a></p>
+                    <p><a href="manageAppointment.jsp">Manage Appointments</a></p>
+                    <p><a href="ManageServices.jsp">Manage Services</a></p>
+                    <p><a href="index.html">Home Page</a></p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Business Hours</h4>
+                    <p>Monday - Friday: 8:00 AM - 8:00 PM</p>
+                    <p>Saturday: 9:00 AM - 6:00 PM</p>
+                    <p>Sunday: 10:00 AM - 4:00 PM</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Barber Queue Management System. All rights reserved. | Privacy Policy | Terms of Service</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('mobile-open');
+            });
+            
+            // Add active state to navigation links
+            const navLinks = document.querySelectorAll('.nav-links a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // User profile interaction
+            const userProfile = document.querySelector('.user-profile');
+            userProfile.addEventListener('click', function() {
+                alert('Barber profile menu would open here');
+            });
+
+            // Form validation and submission
+            const form = document.querySelector('.service-form');
+            const inputs = document.querySelectorAll('.form-input');
+            const submitButton = document.querySelector('.submit-button');
+            
+            // Input focus effects
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.parentElement.classList.add('focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.parentElement.classList.remove('focused');
+                });
+            });
+            
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+                
+                // Basic validation
+                inputs.forEach(input => {
+                    if (!input.value.trim()) {
+                        isValid = false;
+                        input.style.borderColor = 'var(--danger)';
+                        input.classList.add('shake');
+                        setTimeout(() => {
+                            input.classList.remove('shake');
+                        }, 500);
+                    }
+                });
+                
+                // Price validation
+                const priceInput = document.getElementById('sprice');
+                if (priceInput.value && parseFloat(priceInput.value) <= 0) {
+                    isValid = false;
+                    priceInput.style.borderColor = 'var(--danger)';
+                    priceInput.classList.add('shake');
+                    setTimeout(() => {
+                        priceInput.classList.remove('shake');
+                    }, 500);
+                }
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    return;
+                }
+                
+                // Show loading state
+                const originalText = submitButton.innerHTML;
+                submitButton.innerHTML = '<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxwb2x5bGluZSBwb2ludHM9IjEyIDYgMTIgMTIgMTYuNSAxNCI+PC9wb2x5bGluZT48L3N2Zz4=" class="button-icon" alt="Loading"> Adding Service...';
+                submitButton.disabled = true;
+                submitButton.style.opacity = '0.8';
+                
+                // Simulate loading for demo
+                setTimeout(() => {
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                    submitButton.style.opacity = '1';
+                                       
+                    
+                    // Show success message
+                    alert('Service added successfully!');
+                }, 2000);
+            });
+            
+            // Real-time validation
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    if (this.value.trim()) {
+                        this.style.borderColor = 'var(--success)';
+                    } else {
+                        this.style.borderColor = '#e5e7eb';
+                    }
+                });
+            });
+            
+            // Auto-resize textarea
+            const textarea = document.getElementById('sdesc');
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+            
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!sidebar.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+                    sidebar.classList.remove('mobile-open');
+                }
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Escape key closes mobile menu
+                if (e.key === 'Escape' && sidebar.classList.contains('mobile-open')) {
+                    sidebar.classList.remove('mobile-open');
+                }
+                
+                // Ctrl+Enter submits form
+                if (e.ctrlKey && e.key === 'Enter') {
+                    form.dispatchEvent(new Event('submit'));
+                }
+            });
+            
+            // Add some sample data for demo purposes
+            const sampleServices = [
+                {
+                    name: "Classic Haircut",
+                    desc: "Traditional barber haircut with clipper work, scissor finishing, and styling. Includes consultation and neck shave. Duration: 30 minutes.",
+                    price: "35.00"
+                },
+                {
+                    name: "Beard Trim & Shape Up",
+                    desc: "Professional beard trimming and shaping to maintain your desired style. Includes hot towel treatment and beard oil application. Duration: 25 minutes.",
+                    price: "25.00"
+                },
+                {
+                    name: "Royal Shave",
+                    desc: "Traditional straight razor shave with hot towels, pre-shave oil, and premium shaving cream. Finishes with aftershave and moisturizer. Duration: 45 minutes.",
+                    price: "45.00"
+                }
+            ];
+            
+            // Add sample data button for demo (remove in production)
+            const demoButton = document.createElement('button');
+            demoButton.type = 'button';
+            demoButton.textContent = 'Fill with Sample Data';
+            demoButton.style.cssText = `
+                background: var(--secondary);
+                color: white;
+                border: none;
+                padding: 12px 20px;
+                border-radius: 8px;
+                font-size: 14px;
+                cursor: pointer;
+                margin-top: 16px;
+                transition: all 0.3s ease;
+                display: block;
+                width: 100%;
+            `;
+            
+            demoButton.addEventListener('mouseenter', function() {
+                this.style.background = '#475569';
+                this.style.transform = 'translateY(-2px)';
+            });
+            
+            demoButton.addEventListener('mouseleave', function() {
+                this.style.background = 'var(--secondary)';
+                this.style.transform = 'translateY(0)';
+            });
+            
+            demoButton.addEventListener('click', function() {
+                const randomService = sampleServices[Math.floor(Math.random() * sampleServices.length)];
+                document.getElementById('sname').value = randomService.name;
+                document.getElementById('sdesc').value = randomService.desc;
+                document.getElementById('sprice').value = randomService.price;
+                
+                // Trigger input events for styling
+                document.getElementById('sdesc').dispatchEvent(new Event('input'));
+                document.querySelectorAll('.form-input').forEach(input => {
+                    input.dispatchEvent(new Event('input'));
+                });
+                
+                // Show notification
+                const notification = document.createElement('div');
+                notification.textContent = 'Sample data loaded!';
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: var(--success);
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    z-index: 10000;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    animation: slideIn 0.3s ease;
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
+            });
+            
+            // Add demo button to form
+            form.appendChild(demoButton);
+            
+            // Add CSS for notifications
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+                
+                .form-group.focused label {
+                    color: var(--primary);
+                    transform: translateY(-2px);
+                    transition: all 0.3s ease;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>
